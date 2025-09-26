@@ -6,14 +6,15 @@ class NetworkSecurityException(Exception):
     """Purpose: Add extra debugging details (file name, line number) automatically when an error occurs.
     """
     def __init__(self,error_message,error_details:sys): # The original error message (e.g., "division by zero"), passing sys so we can use sys.exc_info() to extract traceback information
-        self.error_message=error_message 
+        super().__init__(error_message)
         _,_,exc_tb=error_details.exc_info() # It returns a tuple: (exc_type, exc_value, exc_traceback), needed the traceback object (exc_tb), so the first two values are ignored (_, _).
 
         self.lineno=exc_tb.tb_lineno
         self.file_name=exc_tb.tb_frame.f_code.co_filename
+        self.error_message=str(error_message)
 
         # Log automatically when exception occurs
-        logger.error(self) # self calls your __str__() automatically.It logs the error message into your log file with all formatting applied.
+        logger.error(self.__str__()) # self calls your __str__() automatically.It logs the error message into your log file with all formatting applied.
 
     def __str__(self):
         return (
